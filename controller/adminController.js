@@ -9,7 +9,7 @@ import interactionModels from "../models/interaction.models.js";
 import commentsModels from "../models/comments.models.js";
 import categoryModels from "../models/category.models.js";
 import blogModels from "../models/blog.models.js";
-
+import mongoose from "mongoose";
 const { send200, send403, send400, send401, send404, send500 } = responseHelper;
 
 // Login for Super Admin
@@ -460,7 +460,7 @@ export const createBlog = async (req, res) => {
       return res.status(400).json({ error: 'Invalid category ID.' });
     }
 
-    const newBlog = new Blog({
+    const newBlog = new blogModels({
       image,
       heading,
       description,
@@ -476,7 +476,7 @@ export const createBlog = async (req, res) => {
     await newBlog.save();
     res.status(201).json(newBlog);
   } catch (error) {
-    res.status(500).json({ error: 'Server error, please try again.' });
+    res.status(500).json({ error: `Server error, please try again. ${error}` });
   }
 };
 
