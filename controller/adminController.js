@@ -10,6 +10,7 @@ import commentsModels from "../models/comments.models.js";
 import categoryModels from "../models/category.models.js";
 import blogModels from "../models/blog.models.js";
 import mongoose from "mongoose";
+import categorysModels from "../models/categorys.models.js";
 const { send200, send403, send400, send401, send404, send500 } = responseHelper;
 
 // Login for Super Admin
@@ -60,6 +61,7 @@ const loginSuperAdmin = async (req, res) => {
     });
   }
 };
+
 
 // Create a Super Admin
 const createSuperAdmin = async (req, res) => {
@@ -455,7 +457,7 @@ export const createBlog = async (req, res) => {
     const { image, heading, description, readTime, author, hashtags, keywords, category, content } = req.body;
 
     // Validate category
-    const categoryExists = await categoryModels.findById(category);
+    const categoryExists = await categorysModels.findById(category);
     if (!categoryExists) {
       return res.status(400).json({ error: 'Invalid category ID.' });
     }

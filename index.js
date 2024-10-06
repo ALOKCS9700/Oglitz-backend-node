@@ -4,6 +4,8 @@ import cors from "cors";
 import "./db.js";
 import user from "./routes/userRoute.js";
 import admin from "./routes/adminRoute.js";
+import nautikaAdmin from "./routes/nautikaAdminRoutes.js";
+import nautikaPublic from "./routes/nautikaPublicRoutes.js";
 import faq from "./routes/faqRoutes.js";
 import contact from "./routes/contactRoutes.js";
 import policies from "./routes/policyRoutes.js";
@@ -44,5 +46,10 @@ app.use("/contact", contact);
 app.use("/policies", policies);
 app.use("/utm", utm);
 app.use("/newsletter", newsletter);
+
+
+// New Nautika Blog routes
+app.use("/admin/nautika", nautikaAdmin);  // Admin routes for Nautika Blog
+app.use("/api/nautika", nautikaPublic);   // Public routes for Nautika Blog
 
 app.listen(port, () => console.log(`server listening on port ${port}`));

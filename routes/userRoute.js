@@ -11,6 +11,9 @@ router.post("/verifyotp", verifyToken, verifyOtp);
 router.get("/getuserprofile", verifyToken, getUserProfile);
 router.post("/login", login);
 router.get("/getIntro", getIntro);
+router.get("/checkStatus", (req, res) => {
+  res.status(200).json({ message: "Server is running fine!" });
+});
 
 
 // Blog Retrieval
