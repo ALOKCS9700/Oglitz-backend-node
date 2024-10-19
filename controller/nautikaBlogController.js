@@ -1,6 +1,8 @@
 import NautikaBlog from "../models/blogs.models.js";
 import NautikaCategory from "../models/category.models.js";
 import mongoose from "mongoose";
+import testimonelModes from "../models/testimonel.modes.js";
+import galleryNautikaModels from "../models/galleryNautika.models.js";
 
 // Get Dashboard Data
 export const getDashboardData = async (req, res) => {
@@ -46,6 +48,10 @@ export const createBlog = async (req, res) => {
       status,
       image,
       faqs,
+      metaTitle, // Add this line
+      metaDescription, // Add this line
+      metaKeywords, // Add this line
+      videoUrl,
     } = req.body;
 
     const newBlog = new NautikaBlog({
@@ -57,6 +63,10 @@ export const createBlog = async (req, res) => {
       status,
       image,
       faqs,
+      metaTitle, // Add this line
+      metaDescription, // Add this line
+      metaKeywords, // Add this line
+      videoUrl,
     });
 
     await newBlog.save();
@@ -102,12 +112,35 @@ export const deleteBlog = async (req, res) => {
 // Get All Blogs
 export const getAllBlogs = async (req, res) => {
   try {
-    const blogs = await NautikaBlog.find().sort({ createdDate: -1 });
-    res.status(200).json(blogs);
+    // Get page and limit from query parameters, with defaults
+    const page = parseInt(req.query.page) || 1; // Default to page 1
+    const limit = parseInt(req.query.limit) || 10; // Default to 10 items per page
+
+    // Calculate the number of documents to skip
+    const skip = (page - 1) * limit;
+
+    // Fetch blogs with pagination
+    const blogs = await NautikaBlog.find()
+      .sort({ createdDate: -1 })
+      .skip(skip)
+      .limit(limit);
+
+    // Count total number of documents
+    const total = await NautikaBlog.countDocuments();
+
+    // Respond with the blogs and additional pagination info
+    res.status(200).json({
+      total,
+      page,
+      limit,
+      totalPages: Math.ceil(total / limit), // Calculate total pages
+      blogs,
+    });
   } catch (error) {
     res.status(500).json({ error: "Server error" });
   }
 };
+
 
 // Get Blog by ID
 export const getBlogById = async (req, res) => {
@@ -164,3 +197,192 @@ export const searchBlogsByCategoryAndText = async (req, res) => {
 };
 
 
+// testimonial 
+// Create a new testimonial
+export const createTestimonial = async (req, res) => {
+  try {
+    const testimonial = new testimonelModes(req.body);
+    await testimonial.save();
+    res.status(201).json(testimonial);
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+};
+
+// Get all testimonials with pagination
+export const getAllTestimonials = async (req, res) => {
+  try {
+    const page = parseInt(req.query.page) || 1; // Current page number
+    const limit = parseInt(req.query.limit) || 10; // Number of items per page
+    const skip = (page - 1) * limit; // Number of items to skip
+
+    const totalCount = await testimonelModes.countDocuments(); // Total number of testimonials
+    const testimonials = await testimonelModes
+      .find()
+      .skip(skip)
+      .limit(limit)
+      .sort({ createdAt: -1 }); // Sorting by creation date in descending order
+
+    res.status(200).json({
+      testimonials,
+      page,
+      totalPages: Math.ceil(totalCount / limit),
+      count: totalCount,
+    });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// Get a testimonial by ID
+export const getTestimonialById = async (req, res) => {
+  try {
+    const testimonial = await testimonelModes.findById(req.params.id);
+    if (!testimonial) {
+      return res.status(404).json({ message: "Testimonial not found" });
+    }
+    res.status(200).json(testimonial);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// Update a testimonial by ID
+export const updateTestimonial = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const updatedTestimonial = await testimonelModes.findByIdAndUpdate(
+      id,
+      req.body,
+      { new: true, runValidators: true }
+    );
+
+    if (!updatedTestimonial) {
+      return res.status(404).json({ message: "Testimonial not found" });
+    }
+
+    res.status(200).json(updatedTestimonial);
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+};
+
+// Delete a testimonial by ID
+export const deleteTestimonial = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const deletedTestimonial = await testimonelModes.findByIdAndDelete(id);
+
+    if (!deletedTestimonial) {
+      return res.status(404).json({ message: "Testimonial not found" });
+    }
+
+    res.status(200).json({ message: "Testimonial deleted successfully" });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+
+
+
+
+//Gallery
+// Create a new gallery
+export const createGallery = async (req, res) => {
+  try {
+    // Destructure properties from the request body
+    const {
+      title,
+      images,
+      video_url,  // Optional
+      coverImage,
+    } = req.body;
+
+    // Create a new gallery instance with destructured values
+    const gallery = new galleryNautikaModels({
+      title,
+      images, // Expecting an array of image URLs
+      video_url, // Optional
+      coverImage,
+    });
+
+    // Save the gallery to the database
+    await gallery.save();
+    res.status(201).json(gallery);
+  } catch (error) {
+    console.error("Error creating gallery:", error.message); // Log error for debugging
+    res.status(400).json({ message: error.message });
+  }
+};
+// Get all galleries with pagination
+export const getAllGalleries = async (req, res) => {
+  try {
+    const page = parseInt(req.query.page) || 1; // Current page number
+    const limit = parseInt(req.query.limit) || 10; // Number of items per page
+    const skip = (page - 1) * limit; // Number of items to skip
+
+    const totalCount = await galleryNautikaModels.countDocuments(); // Total number of galleries
+    const galleries = await galleryNautikaModels
+      .find()
+      .skip(skip)
+      .limit(limit)
+      .sort({ createdAt: -1 }); // Sorting by creation date in descending order
+
+    res.status(200).json({
+      galleries,
+      page,
+      totalPages: Math.ceil(totalCount / limit),
+      count: totalCount,
+    });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// Get a gallery by ID
+export const getGalleryById = async (req, res) => {
+  try {
+    const gallery = await galleryNautikaModels.findById(req.params.id);
+    if (!gallery) {
+      return res.status(404).json({ message: "Gallery not found" });
+    }
+    res.status(200).json(gallery);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// Update a gallery by ID
+export const updateGallery = async (req, res) => {
+  try {
+    const updatedGallery = await galleryNautikaModels.findByIdAndUpdate(
+      req.params.id,
+      req.body,
+      { new: true, runValidators: true }
+    );
+
+    if (!updatedGallery) {
+      return res.status(404).json({ message: "Gallery not found" });
+    }
+
+    res.status(200).json(updatedGallery);
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+};
+
+// Delete a gallery by ID
+export const deleteGallery = async (req, res) => {
+  try {
+    const deletedGallery = await galleryNautikaModels.findByIdAndDelete(
+      req.params.id
+    );
+    if (!deletedGallery) {
+      return res.status(404).json({ message: "Gallery not found" });
+    }
+    res.status(200).json({ message: "Gallery deleted successfully" });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};

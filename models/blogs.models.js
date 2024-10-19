@@ -37,7 +37,7 @@ const blogSchema = new Schema(
     faqs: [
       {
         question: String,
-        answer: String, 
+        answer: String,
       },
     ],
     createdDate: {
@@ -47,6 +47,23 @@ const blogSchema = new Schema(
     updatedDate: {
       type: Date,
       default: Date.now,
+    },
+    // Optional meta fields
+    metaTitle: {
+      type: String,
+      required: false,
+    },
+    metaDescription: {
+      type: String,
+      required: false,
+    },
+    metaKeywords: {
+      type: String,
+      required: false,
+    },
+    videoUrl: {
+      type: String,
+      required: false,
     },
   },
   { timestamps: true }
