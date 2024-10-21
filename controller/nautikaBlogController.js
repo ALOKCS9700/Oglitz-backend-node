@@ -160,14 +160,36 @@ export const getBlogById = async (req, res) => {
 export const getBlogsByCategory = async (req, res) => {
   try {
     const { categoryId } = req.params;
-    const blogs = await NautikaBlog.find({ categoryId }).sort({
-      createdDate: -1,
+    
+    // Get page and limit from query parameters, with defaults
+    const page = parseInt(req.query.page) || 1; // Default to page 1
+    const limit = parseInt(req.query.limit) || 10; // Default to 10 items per page
+
+    // Calculate the number of documents to skip
+    const skip = (page - 1) * limit;
+
+    // Fetch blogs by category with pagination
+    const blogs = await NautikaBlog.find({ categoryId })
+      .sort({ createdDate: -1 })
+      .skip(skip)
+      .limit(limit);
+
+    // Count total number of documents for the category
+    const total = await NautikaBlog.countDocuments({ categoryId });
+
+    // Respond with the blogs and additional pagination info
+    res.status(200).json({
+      total,
+      page,
+      limit,
+      totalPages: Math.ceil(total / limit), // Calculate total pages
+      blogs,
     });
-    res.status(200).json(blogs);
   } catch (error) {
     res.status(500).json({ error: "Server error" });
   }
 };
+
 
 // Search Blogs by Category and Text
 export const searchBlogsByCategoryAndText = async (req, res) => {

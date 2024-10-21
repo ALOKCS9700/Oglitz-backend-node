@@ -49,12 +49,35 @@ export const updateCategory = async (req, res) => {
 // Get All Categories
 export const getAllCategories = async (req, res) => {
   try {
-    const categories = await NautikaCategory.find().sort({ createdDate: -1 });
-    res.status(200).json(categories);
+    // Get page and limit from query parameters, with defaults
+    const page = parseInt(req.query.page) || 1; // Default to page 1
+    const limit = parseInt(req.query.limit) || 10; // Default to 10 items per page
+
+    // Calculate the number of documents to skip
+    const skip = (page - 1) * limit;
+
+    // Fetch categories with pagination
+    const categories = await NautikaCategory.find()
+      .sort({ createdDate: -1 })
+      .skip(skip)
+      .limit(limit);
+
+    // Count total number of documents
+    const total = await NautikaCategory.countDocuments();
+
+    // Respond with the categories and additional pagination info
+    res.status(200).json({
+      total,
+      page,
+      limit,
+      totalPages: Math.ceil(total / limit), // Calculate total pages
+      categories,
+    });
   } catch (error) {
     res.status(500).json({ error: "Server error" });
   }
 };
+
 
 // Get Category by ID
 export const getCategoryById = async (req, res) => {

@@ -2,19 +2,22 @@ import mongoose from "mongoose";
 
 const Schema = mongoose.Schema;
 
-const faqSchema = new Schema(
+const teamSchema = new Schema(
   {
-    question: {
+    name: {
       type: String,
       required: true,
     },
-    answer: {
+    designation: {
       type: String,
+      required: true,
+    },
+    image: {
+      type: String, // URL or path to the image
       required: true,
     },
   },
   { timestamps: true } // Automatically create 'createdAt' and 'updatedAt' fields
 );
 
-// Exporting the FAQ model
-export default mongoose.model("FAQNautika", faqSchema);
+export default mongoose.model("TeamNautika", teamSchema);
