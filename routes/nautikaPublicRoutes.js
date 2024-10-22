@@ -8,6 +8,8 @@ import {
   getTestimonialById,
   getAllGalleries,
   getGalleryById,
+  getTestimonialsByType,
+  getGalleryByType,
 } from "../controller/nautikaBlogController.js";
 import {
   getAllCategories,
@@ -33,9 +35,10 @@ router.get("/categories/search", searchCategoriesByText); // Search categories
 //Public api for testimoneal
 router.get("/testimonials", getAllTestimonials); // Get all testimonials with pagination
 router.get("/testimonials/:id", getTestimonialById); // Get a testimonial by ID
-
+router.get("/testimonials/type/:type", getTestimonialsByType);
 //Public api for gallery
 router.get("/galleries", getAllGalleries); // Get all galleries with pagination
 router.get("/galleries/:id", getGalleryById); // Get a gallery by ID
+router.get("/galleries/type/:type", getGalleryByType);
 
 export default router;

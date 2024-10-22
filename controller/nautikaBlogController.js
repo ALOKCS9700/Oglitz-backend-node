@@ -52,6 +52,7 @@ export const createBlog = async (req, res) => {
       metaDescription, // Add this line
       metaKeywords, // Add this line
       videoUrl,
+      shortDescription
     } = req.body;
 
     const newBlog = new NautikaBlog({
@@ -67,6 +68,7 @@ export const createBlog = async (req, res) => {
       metaDescription, // Add this line
       metaKeywords, // Add this line
       videoUrl,
+      shortDescription
     });
 
     await newBlog.save();
@@ -269,6 +271,22 @@ export const getTestimonialById = async (req, res) => {
   }
 };
 
+
+export const getTestimonialsByType = async (req, res) => {
+  try {
+    const { type } = req.params;
+    if (!["text", "video"].includes(type)) {
+      return res.status(400).json({ message: "Invalid type specified" });
+    }
+
+    const testimonials = await testimonelModes.find({ type });
+    res.status(200).json(testimonials);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+
 // Update a testimonial by ID
 export const updateTestimonial = async (req, res) => {
   try {
@@ -374,6 +392,32 @@ export const getGalleryById = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
+
+export const getGalleryByType = async (req, res) => {
+  try {
+    const { type } = req.params;
+    if (!["image", "video"].includes(type)) {
+      return res.status(400).json({ message: "Invalid type specified" });
+    }
+
+    // Query based on the presence or absence of video_url
+    let galleries;
+    if (type === "video") {
+      galleries = await galleryNautikaModels.find({
+        video_url: { $ne: null, $ne: "" },
+      });
+    } else {
+      galleries = await galleryNautikaModels.find({
+        $or: [{ video_url: null }, { video_url: "" }],
+      });
+    }
+
+    res.status(200).json(galleries);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
 
 // Update a gallery by ID
 export const updateGallery = async (req, res) => {

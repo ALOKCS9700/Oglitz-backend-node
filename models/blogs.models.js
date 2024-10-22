@@ -65,6 +65,10 @@ const blogSchema = new Schema(
       type: String,
       required: false,
     },
+    shortDescription: {
+      type: String,
+      required: false,
+    },
   },
   { timestamps: true }
 );
