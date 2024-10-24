@@ -1,9 +1,66 @@
 import NautikaBlog from "../models/blogs.models.js";
 import NautikaCategory from "../models/category.models.js";
+import adminModels from "../models/admin.models.js";
 import mongoose from "mongoose";
 import testimonelModes from "../models/testimonel.modes.js";
 import galleryNautikaModels from "../models/galleryNautika.models.js";
+import responseHelper from "../helpers/response.helper.js";
+import hashPassword from './../middleware/hashPassword.js';
+import { MESSAGE } from "../helpers/message.helper.js";
+import jwt from "jsonwebtoken";
 
+
+const { send200, send403, send400, send401, send404, send500 } = responseHelper;
+
+
+// Login for Super Admin
+export const loginSuperAdmin = async (req, res) => {
+  const { email, password } = req.body;
+
+  if (!email || !password) {
+    return send400(res, {
+      status: false,
+      message: MESSAGE.FIELDS_REQUIRED,
+    });
+  }
+
+  try {
+    const admin = await adminModels.findOne({ email });
+
+    if (!admin || admin.role !== "SUPER_ADMIN") {
+      return send404(res, {
+        status: false,
+        message: MESSAGE.USER_NOT_FOUND,
+      });
+    }
+
+    const validPass = await hashPassword.compare(password, admin.password);
+
+    if (!validPass) {
+      return send400(res, {
+        status: false,
+        message: MESSAGE.LOGIN_ERROR,
+      });
+    }
+
+    const token = jwt.sign(
+      { _id: admin._id },
+      process.env.JWT_SECRET
+    );
+
+    res.header("auth-token", token).status(200).json({
+      status: true,
+      token,
+      message: MESSAGE.LOGIN_SUCCESS,
+      data: admin,
+    });
+  } catch (error) {
+    return send500(res, {
+      status: false,
+      message: error.message,
+    });
+  }
+};
 // Get Dashboard Data
 export const getDashboardData = async (req, res) => {
   try {
@@ -35,6 +92,9 @@ export const getDashboardData = async (req, res) => {
     res.status(500).json({ error: "Server error" });
   }
 };
+
+
+
 
 // Create Blog
 export const createBlog = async (req, res) => {

@@ -7,6 +7,7 @@ import {
   getAllBlogs,
   getBlogById,
   getBlogsByCategory,
+  loginSuperAdmin,
   searchBlogsByCategoryAndText,
   createTestimonial,
   updateTestimonial,
@@ -28,6 +29,7 @@ const router = express.Router();
 
 // Dashboard
 router.get("/dashboard", getDashboardData);
+router.post("/login", loginSuperAdmin);
 
 // Blog APIs
 router.post("/blogs", createBlog);

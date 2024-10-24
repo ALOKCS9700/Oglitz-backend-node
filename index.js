@@ -32,9 +32,9 @@ const port = process.env.PORT || 5001;
 
 // Serve static files from 'uploads' directory
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
-
 // New Nautika Blog routes
 app.use("/admin/nautika", nautikaAdmin); // Admin routes for Nautika Blog without token
+app.use("/admin", nautikaAdmin); // Admin routes for Nautika Blog without token
 // app.use("/admin/nautika", verifyToken,nautikaAdmin);  // Admin routes for Nautika Blog with token if you want to enable open comment out this comment the above one it will work.
 app.use("/api/nautika", nautikaPublic); // Public routes for Nautika Blog
 app.use("/api/nautika/faq", faq);
