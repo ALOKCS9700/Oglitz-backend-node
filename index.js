@@ -8,6 +8,7 @@ import "./db.js";
 import faq from "./routes/faqRoutes.js";
 import nautikaAdmin from "./routes/nautikaAdminRoutes.js";
 import nautikaPublic from "./routes/nautikaPublicRoutes.js";
+import islands from "./routes/islandRoutes.js";
 import ts from "./routes/nautikaTeamSocialRoutes.js";
 
 dotenv.config();
@@ -35,6 +36,7 @@ app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 // New Nautika Blog routes
 app.use("/admin/nautika", nautikaAdmin); // Admin routes for Nautika Blog without token
 app.use("/admin", nautikaAdmin); // Admin routes for Nautika Blog without token
+app.use("/islands/nautika", islands); // Admin routes for Nautika Blog without token
 // app.use("/admin/nautika", verifyToken,nautikaAdmin);  // Admin routes for Nautika Blog with token if you want to enable open comment out this comment the above one it will work.
 app.use("/api/nautika", nautikaPublic); // Public routes for Nautika Blog
 app.use("/api/nautika/faq", faq);
