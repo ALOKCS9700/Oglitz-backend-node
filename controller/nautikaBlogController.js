@@ -294,18 +294,54 @@ export const createTestimonial = async (req, res) => {
 };
 
 // Get all testimonials with pagination
+// export const getAllTestimonials = async (req, res) => {
+//   try {
+//     const page = parseInt(req.query.page) || 1; // Current page number
+//     const limit = parseInt(req.query.limit) || 10; // Number of items per page
+//     const skip = (page - 1) * limit; // Number of items to skip
+
+//     const totalCount = await testimonelModes.countDocuments(); // Total number of testimonials
+//     const testimonials = await testimonelModes
+//       .find()
+//       .skip(skip)
+//       .limit(limit)
+//       .sort({ createdAt: -1 }); // Sorting by creation date in descending order
+
+//     res.status(200).json({
+//       testimonials,
+//       page,
+//       totalPages: Math.ceil(totalCount / limit),
+//       count: totalCount,
+//     });
+//   } catch (error) {
+//     res.status(500).json({ message: error.message });
+//   }
+// };
 export const getAllTestimonials = async (req, res) => {
   try {
     const page = parseInt(req.query.page) || 1; // Current page number
     const limit = parseInt(req.query.limit) || 10; // Number of items per page
     const skip = (page - 1) * limit; // Number of items to skip
+    const { type } = req.query; // Retrieve type from query params
 
-    const totalCount = await testimonelModes.countDocuments(); // Total number of testimonials
+    // Validate type if it is provided
+    let filter = {};
+    if (type) {
+      if (!["text", "video"].includes(type)) {
+        return res.status(400).json({ message: "Invalid type specified" });
+      }
+      filter.type = type;
+    }
+
+    // Count total documents based on filter
+    const totalCount = await testimonelModes.countDocuments(filter);
+
+    // Fetch testimonials based on pagination and filter
     const testimonials = await testimonelModes
-      .find()
+      .find(filter)
       .skip(skip)
       .limit(limit)
-      .sort({ createdAt: -1 }); // Sorting by creation date in descending order
+      .sort({ createdAt: -1 });
 
     res.status(200).json({
       testimonials,
@@ -317,6 +353,7 @@ export const getAllTestimonials = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
+
 
 // Get a testimonial by ID
 export const getTestimonialById = async (req, res) => {
@@ -416,18 +453,57 @@ export const createGallery = async (req, res) => {
   }
 };
 // Get all galleries with pagination
+// export const getAllGalleries = async (req, res) => {
+//   try {
+//     const page = parseInt(req.query.page) || 1; // Current page number
+//     const limit = parseInt(req.query.limit) || 10; // Number of items per page
+//     const skip = (page - 1) * limit; // Number of items to skip
+
+//     const totalCount = await galleryNautikaModels.countDocuments(); // Total number of galleries
+//     const galleries = await galleryNautikaModels
+//       .find()
+//       .skip(skip)
+//       .limit(limit)
+//       .sort({ createdAt: -1 }); // Sorting by creation date in descending order
+
+//     res.status(200).json({
+//       galleries,
+//       page,
+//       totalPages: Math.ceil(totalCount / limit),
+//       count: totalCount,
+//     });
+//   } catch (error) {
+//     res.status(500).json({ message: error.message });
+//   }
+// };
 export const getAllGalleries = async (req, res) => {
   try {
     const page = parseInt(req.query.page) || 1; // Current page number
     const limit = parseInt(req.query.limit) || 10; // Number of items per page
     const skip = (page - 1) * limit; // Number of items to skip
+    const { type } = req.query; // Retrieve type from query params
 
-    const totalCount = await galleryNautikaModels.countDocuments(); // Total number of galleries
+    // Validate type if provided and set filter conditions
+    let filter = {};
+    if (type) {
+      if (!["image", "video"].includes(type)) {
+        return res.status(400).json({ message: "Invalid type specified" });
+      }
+      filter =
+        type === "video"
+          ? { video_url: { $ne: null, $ne: "" } } // Filter for videos
+          : { $or: [{ video_url: null }, { video_url: "" }] }; // Filter for images
+    }
+
+    // Count total documents based on filter
+    const totalCount = await galleryNautikaModels.countDocuments(filter);
+
+    // Fetch galleries based on pagination and filter
     const galleries = await galleryNautikaModels
-      .find()
+      .find(filter)
       .skip(skip)
       .limit(limit)
-      .sort({ createdAt: -1 }); // Sorting by creation date in descending order
+      .sort({ createdAt: -1 });
 
     res.status(200).json({
       galleries,
@@ -439,6 +515,7 @@ export const getAllGalleries = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
+
 
 // Get a gallery by ID
 export const getGalleryById = async (req, res) => {
