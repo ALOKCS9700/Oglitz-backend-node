@@ -499,23 +499,30 @@ export const getAllGalleries = async (req, res) => {
     const totalCount = await galleryNautikaModels.countDocuments(filter);
 
     // Fetch galleries based on pagination and filter
-    const galleries = await galleryNautikaModels
+    let galleries = await galleryNautikaModels
       .find(filter)
       .skip(skip)
       .limit(limit)
       .sort({ createdAt: -1 });
+
+    // Append type to each gallery item
+    galleries = galleries.map((gallery) => ({
+      ...gallery.toObject(),
+      type: gallery.video_url ? "video" : "image",
+    }));
 
     res.status(200).json({
       galleries,
       page,
       totalPages: Math.ceil(totalCount / limit),
       count: totalCount,
-      type: type || "all", // Adding type to the response, defaulting to "all" if type is not specified
+      type: type || "all",
     });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 };
+
 
 
 
