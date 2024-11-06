@@ -510,11 +510,13 @@ export const getAllGalleries = async (req, res) => {
       page,
       totalPages: Math.ceil(totalCount / limit),
       count: totalCount,
+      type: type || "all", // Adding type to the response, defaulting to "all" if type is not specified
     });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 };
+
 
 
 // Get a gallery by ID
