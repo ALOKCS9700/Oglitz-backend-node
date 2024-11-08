@@ -2,49 +2,96 @@ import { MESSAGE } from "../helpers/message.helper.js";
 import islandModels from "../models/island.models.js";
 import responseHelper from "../helpers/response.helper.js";
 import islandImagesModels from "../models/islandImages.models.js";
+import { closeSync } from "fs";
 
 const { send200, send403, send400, send401, send404, send500 } = responseHelper;
 
 
 // Create a new island
+// export const createIsland = async (req, res) => {
+//   const {
+//     title,
+//     about,
+//     best_time,
+//     popular_beaches,
+//     things_to_do,
+//     extra_content,
+//     images,
+//     meta,
+//   } = req.body;
+
+//   if (!title || !about || !best_time || !popular_beaches || !things_to_do) {
+//     return send400(res, { status: false, message: MESSAGE.FIELDS_REQUIRED });
+//   }
+
+//   try {
+//     const newIsland = new islandModels({
+//       title,
+//       about,
+//       best_time,
+//       popular_beaches,
+//       things_to_do,
+//       extra_content,
+//       images,
+//       meta,
+//     });
+
+//     await newIsland.save();
+//     send200(res, {
+//       status: true,
+//       message: MESSAGE.ISLAND_CREATED,
+//       data: newIsland,
+//     });
+//   } catch (error) {
+//     send500(res, { status: false, message: error.message });
+//   }
+// };
 export const createIsland = async (req, res) => {
   const {
     title,
     about,
     best_time,
+    cover_image,
     popular_beaches,
     things_to_do,
     extra_content,
     images,
     meta,
+    tags,
   } = req.body;
 
+  // Validate required fields
   if (!title || !about || !best_time || !popular_beaches || !things_to_do) {
-    return send400(res, { status: false, message: MESSAGE.FIELDS_REQUIRED });
+    return res.status(400).json({ error: "Required fields are missing" });
   }
 
   try {
+    // Create new island document using the provided data
     const newIsland = new islandModels({
       title,
       about,
       best_time,
+      cover_image,
       popular_beaches,
       things_to_do,
       extra_content,
       images,
       meta,
+      tags,
     });
 
-    await newIsland.save();
-    send200(res, {
-      status: true,
-      message: MESSAGE.ISLAND_CREATED,
-      data: newIsland,
-    });
+    // Save the island to the database
+    const savedIsland = await newIsland.save();
+
+    // Return the saved island in the response
+    res.status(201).json(savedIsland);
   } catch (error) {
-    send500(res, { status: false, message: error.message });
+    // Handle any errors and return the error message
+    res.status(400).json({ error: error.message });
   }
 };
+
+
 
 // Get all islands with pagination
 export const getAllIslands = async (req, res) => {

@@ -2,6 +2,21 @@ import mongoose from "mongoose";
 
 const { Schema } = mongoose;
 
+const popularBeachSchema = new Schema({
+  name: {
+    type: String,
+    required: true,
+  },
+  image: {
+    type: String,
+    required: true,
+  },
+  content: {
+    type: String,
+    required: true,
+  },
+});
+
 const islandSchema = new Schema(
   {
     title: {
@@ -16,12 +31,16 @@ const islandSchema = new Schema(
       type: String,
       required: true,
     },
+    cover_image: {
+      type: String,
+      required: false, // Optional if not mandatory
+    },
     popular_beaches: {
-      type: [String], // Array of beach names
+      type: [popularBeachSchema], // Updated to an array of objects
       required: true,
     },
     things_to_do: {
-      type: [String], // Array of activities
+      type: [String],
       required: true,
     },
     extra_content: {
@@ -43,6 +62,10 @@ const islandSchema = new Schema(
         type: String,
         required: false,
       },
+    },
+    tags: {
+      type: String, // Comma-separated string
+      required: false,
     },
     createdDate: {
       type: Date,
