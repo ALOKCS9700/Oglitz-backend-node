@@ -112,7 +112,8 @@ export const createBlog = async (req, res) => {
       metaDescription, // Add this line
       metaKeywords, // Add this line
       videoUrl,
-      shortDescription
+      shortDescription,
+      tags
     } = req.body;
 
     const newBlog = new NautikaBlog({
@@ -128,7 +129,8 @@ export const createBlog = async (req, res) => {
       metaDescription, // Add this line
       metaKeywords, // Add this line
       videoUrl,
-      shortDescription
+      shortDescription,
+      tags
     });
 
     await newBlog.save();
