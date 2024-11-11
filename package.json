@@ -10,8 +10,7 @@
     "prod": "pm2 start server.js",
     "logs": "pm2 logs",
     "killServer": "pm2 kill",
-    "start": "node index.js",
-  "build": "npm install && webpack --config webpack.config.js"
+    "start": "node index.js"
   },
   "author": "Alok Tripathi",
   "license": "ISC",
