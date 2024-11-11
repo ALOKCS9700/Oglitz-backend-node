@@ -10,7 +10,8 @@
     "prod": "pm2 start server.js",
     "logs": "pm2 logs",
     "killServer": "pm2 kill",
-    "start": "node index.js"
+    "start": "node index.js",
+    "build": "react-scripts build"
   },
   "author": "Alok Tripathi",
   "license": "ISC",
