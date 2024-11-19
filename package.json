@@ -51,6 +51,6 @@
   },
   "devDependencies": {
     "@types/busboy": "^1.5.4",
-    "@types/express": "^4.17.21",
+    "@types/express": "^4.17.21"
   }
 }

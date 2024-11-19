@@ -4,14 +4,13 @@ import adminModels from "../models/admin.models.js";
 import mongoose from "mongoose";
 import testimonelModes from "../models/testimonel.modes.js";
 import galleryNautikaModels from "../models/galleryNautika.models.js";
-import hashPassword from './../middleware/hashPassword.js';
+import hashPassword from "./../middleware/hashPassword.js";
 import { MESSAGE } from "../helpers/message.helper.js";
 import jwt from "jsonwebtoken";
 
 import responseHelper from "../helpers/response.helper.js";
 
 const { send200, send403, send400, send401, send404, send500 } = responseHelper;
-
 
 // Login for Super Admin
 export const loginSuperAdmin = async (req, res) => {
@@ -43,10 +42,7 @@ export const loginSuperAdmin = async (req, res) => {
       });
     }
 
-    const token = jwt.sign(
-      { _id: admin._id },
-      process.env.JWT_SECRET
-    );
+    const token = jwt.sign({ _id: admin._id }, process.env.JWT_SECRET);
 
     res.header("auth-token", token).status(200).json({
       status: true,
@@ -79,22 +75,17 @@ export const getDashboardData = async (req, res) => {
       { $limit: 1 },
     ]);
 
-    res
-      .status(200)
-      .json({
-        totalBlogs,
-        totalCategories,
-        recentBlogs,
-        recentCategories,
-        topCategory,
-      });
+    res.status(200).json({
+      totalBlogs,
+      totalCategories,
+      recentBlogs,
+      recentCategories,
+      topCategory,
+    });
   } catch (error) {
     res.status(500).json({ error: "Server error" });
   }
 };
-
-
-
 
 // Create Blog
 export const createBlog = async (req, res) => {
@@ -113,7 +104,8 @@ export const createBlog = async (req, res) => {
       metaKeywords, // Add this line
       videoUrl,
       shortDescription,
-      tags
+      slug,
+      tags,
     } = req.body;
 
     const newBlog = new NautikaBlog({
@@ -130,7 +122,8 @@ export const createBlog = async (req, res) => {
       metaKeywords, // Add this line
       videoUrl,
       shortDescription,
-      tags
+      slug,
+      tags,
     });
 
     await newBlog.save();
@@ -205,7 +198,6 @@ export const getAllBlogs = async (req, res) => {
   }
 };
 
-
 // Get Blog by ID
 export const getBlogById = async (req, res) => {
   try {
@@ -220,11 +212,25 @@ export const getBlogById = async (req, res) => {
   }
 };
 
+// Get Blog by slug
+export const getBlogBySlug = async (req, res) => {
+  try {
+    const { slug } = req.params;
+    const blog = await NautikaBlog.find({ slug });
+    if (!blog) {
+      return res.status(404).json({ error: "Blog not found" });
+    }
+    res.status(200).json(blog);
+  } catch (error) {
+    res.status(500).json({ error: "Server error" });
+  }
+};
+
 // Get Blogs by Category
 export const getBlogsByCategory = async (req, res) => {
   try {
     const { categoryId } = req.params;
-    
+
     // Get page and limit from query parameters, with defaults
     const page = parseInt(req.query.page) || 1; // Default to page 1
     const limit = parseInt(req.query.limit) || 10; // Default to 10 items per page
@@ -254,7 +260,6 @@ export const getBlogsByCategory = async (req, res) => {
   }
 };
 
-
 // Search Blogs by Category and Text
 export const searchBlogsByCategoryAndText = async (req, res) => {
   try {
@@ -282,8 +287,7 @@ export const searchBlogsByCategoryAndText = async (req, res) => {
   }
 };
 
-
-// testimonial 
+// testimonial
 // Create a new testimonial
 export const createTestimonial = async (req, res) => {
   try {
@@ -356,7 +360,6 @@ export const getAllTestimonials = async (req, res) => {
   }
 };
 
-
 // Get a testimonial by ID
 export const getTestimonialById = async (req, res) => {
   try {
@@ -369,7 +372,6 @@ export const getTestimonialById = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
-
 
 export const getTestimonialsByType = async (req, res) => {
   try {
@@ -384,7 +386,6 @@ export const getTestimonialsByType = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
-
 
 // Update a testimonial by ID
 export const updateTestimonial = async (req, res) => {
@@ -422,10 +423,6 @@ export const deleteTestimonial = async (req, res) => {
   }
 };
 
-
-
-
-
 //Gallery
 // Create a new gallery
 export const createGallery = async (req, res) => {
@@ -434,7 +431,7 @@ export const createGallery = async (req, res) => {
     const {
       title,
       images,
-      video_url,  // Optional
+      video_url, // Optional
       coverImage,
     } = req.body;
 
@@ -525,9 +522,6 @@ export const getAllGalleries = async (req, res) => {
   }
 };
 
-
-
-
 // Get a gallery by ID
 export const getGalleryById = async (req, res) => {
   try {
@@ -565,7 +559,6 @@ export const getGalleryByType = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
-
 
 // Update a gallery by ID
 export const updateGallery = async (req, res) => {

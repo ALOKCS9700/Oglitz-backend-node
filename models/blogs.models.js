@@ -69,6 +69,10 @@ const blogSchema = new Schema(
       type: String,
       required: false,
     },
+    slug: {
+      type: String,
+      required: false,
+    },
     tags: {
       type: [String], // Array of strings for tags
       required: false,
