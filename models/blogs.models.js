@@ -12,6 +12,11 @@ const blogSchema = new Schema(
       type: String,
       required: true,
     },
+    slug: {
+      type: String,
+      required: true,
+      unique: true,
+    },
     readTime: {
       type: String,
       required: true,
@@ -69,10 +74,7 @@ const blogSchema = new Schema(
       type: String,
       required: false,
     },
-    slug: {
-      type: String,
-      required: false,
-    },
+
     tags: {
       type: [String], // Array of strings for tags
       required: false,
@@ -80,5 +82,15 @@ const blogSchema = new Schema(
   },
   { timestamps: true }
 );
+
+blogSchema.pre("save", function (next) {
+  if (!this.slug) {
+    this.slug = this.title
+      .toLowerCase()
+      .replace(/[^a-zA-Z0-9]/g, "-")
+      .replace(/-+/g, "-");
+  }
+  next();
+});
 
 export default mongoose.model("NautikaBlog", blogSchema);

@@ -87,6 +87,14 @@ export const getDashboardData = async (req, res) => {
   }
 };
 
+// Helper function to generate slug
+const generateSlug = (title) => {
+  return title
+    .toLowerCase()
+    .replace(/[^a-zA-Z0-9]/g, "-")
+    .replace(/-+/g, "-");
+};
+
 // Create Blog
 export const createBlog = async (req, res) => {
   try {
@@ -99,14 +107,18 @@ export const createBlog = async (req, res) => {
       status,
       image,
       faqs,
-      metaTitle, // Add this line
-      metaDescription, // Add this line
-      metaKeywords, // Add this line
+      metaTitle,
+      metaDescription,
+      metaKeywords,
       videoUrl,
       shortDescription,
-      slug,
       tags,
     } = req.body;
+
+    let slug = req.body.slug;
+    if (!slug) {
+      slug = generateSlug(title);
+    }
 
     const newBlog = new NautikaBlog({
       title,
@@ -117,19 +129,20 @@ export const createBlog = async (req, res) => {
       status,
       image,
       faqs,
-      metaTitle, // Add this line
-      metaDescription, // Add this line
-      metaKeywords, // Add this line
+      metaTitle,
+      metaDescription,
+      metaKeywords,
       videoUrl,
       shortDescription,
       slug,
       tags,
     });
 
-    await newBlog.save();
-    res.status(201).json(newBlog);
+    const savedBlog = await newBlog.save();
+    res.status(201).json(savedBlog);
   } catch (error) {
-    res.status(500).json({ error: `Server error: ${error.message}` });
+    console.error("Error in createBlog:", error);
+    res.status(500).json({ error: "Server error" });
   }
 };
 
@@ -212,16 +225,31 @@ export const getBlogById = async (req, res) => {
   }
 };
 
+export const testAPI = async (req, res) => {
+  try {
+    const { slug } = req.params;
+    const blog = "NautikaBlog.findOne({ slug: slug })";
+    if (!blog) {
+      return res.status(404).json({ error: "Blog not found" });
+    }
+    res.status(200).json("blog");
+  } catch (error) {
+    console.error("Error in getBlogBySlug:", error);
+    res.status(500).json({ error: error });
+  }
+};
+
 // Get Blog by slug
 export const getBlogBySlug = async (req, res) => {
   try {
     const { slug } = req.params;
-    const blog = await NautikaBlog.find({ slug });
+    const blog = await NautikaBlog.findOne({ slug: slug });
     if (!blog) {
       return res.status(404).json({ error: "Blog not found" });
     }
     res.status(200).json(blog);
   } catch (error) {
+    console.error("Error in getBlogBySlug:", error);
     res.status(500).json({ error: "Server error" });
   }
 };

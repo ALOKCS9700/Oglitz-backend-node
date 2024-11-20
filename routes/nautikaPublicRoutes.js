@@ -10,6 +10,8 @@ import {
   getGalleryById,
   getTestimonialsByType,
   getGalleryByType,
+  testAPI,
+  getBlogBySlug,
 } from "../controller/nautikaBlogController.js";
 import {
   getAllCategories,
@@ -22,6 +24,11 @@ const router = express.Router();
 // Public Blog APIs
 router.get("/blogs", getAllBlogs); // Fetch all blogs
 router.get("/blogs/:id", getBlogById); // Fetch blog by ID
+
+router.get("/blog/:slug", getBlogBySlug); // Fetch blog by ID
+
+router.get("/blogs/testAPI", testAPI); // Fetch blog by ID
+
 router.get("/blogs/category/:categoryId", getBlogsByCategory); // Fetch blogs by category
 router.post("/blogs/search", searchBlogsByCategoryAndText); // Search blogs
 
@@ -29,8 +36,6 @@ router.post("/blogs/search", searchBlogsByCategoryAndText); // Search blogs
 router.get("/categories", getAllCategories); // Fetch all categories
 router.get("/categories/:id", getCategoryById); // Fetch category by ID
 router.get("/categories/search", searchCategoriesByText); // Search categories
-
-
 
 //Public api for testimoneal
 router.get("/testimonials", getAllTestimonials); // Get all testimonials with pagination

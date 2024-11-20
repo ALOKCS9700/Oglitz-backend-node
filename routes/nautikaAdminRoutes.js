@@ -10,6 +10,7 @@ import {
   getAllBlogs,
   getBlogById,
   getBlogBySlug,
+  testAPI,
   getBlogsByCategory,
   loginSuperAdmin,
   searchBlogsByCategoryAndText,
@@ -41,7 +42,11 @@ router.put("/blogs/:id", updateBlog);
 router.delete("/blogs/:id", deleteBlog);
 router.get("/blogs", getAllBlogs);
 router.get("/blogs/:id", getBlogById);
+
 router.get("/blog/:slug", getBlogBySlug);
+
+router.get("/blogs/testAPI", testAPI);
+
 router.get("/blogs/category/:categoryId", getBlogsByCategory);
 router.get("/blogs/search", searchBlogsByCategoryAndText);
 
