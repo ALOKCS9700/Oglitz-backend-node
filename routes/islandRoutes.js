@@ -7,6 +7,7 @@ import {
   deleteIsland,
   createIslandImage,
   getIslandImagesByIslandId,
+  getIslandBySlug,
 } from "../controller/islandsController.js";
 
 const router = express.Router();
@@ -15,6 +16,9 @@ const router = express.Router();
 router.post("/islands", createIsland); // Create a new island
 router.get("/islands", getAllIslands); // Get all islands with pagination
 router.get("/islands/:id", getIslandById); // Get an island by ID
+
+router.get("/island/:slug", getIslandBySlug); // Get an island by Slug
+
 router.put("/islands/:id", updateIsland); // Update an island by ID
 router.delete("/islands/:id", deleteIsland); // Delete an island by ID
 
@@ -23,6 +27,5 @@ router.post("/island-images", createIslandImage);
 
 // Get all images for a specific island
 router.get("/island-images", getIslandImagesByIslandId);
-
 
 export default router;

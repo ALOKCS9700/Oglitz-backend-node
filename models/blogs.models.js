@@ -9,7 +9,7 @@ const blogSchema = new Schema(
       required: true,
     },
     content: {
-      type: String,
+      type: Buffer,
       required: true,
     },
     slug: {

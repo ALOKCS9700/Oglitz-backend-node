@@ -6,7 +6,6 @@ import { closeSync } from "fs";
 
 const { send200, send403, send400, send401, send404, send500 } = responseHelper;
 
-
 // Create a new island
 // export const createIsland = async (req, res) => {
 //   const {
@@ -91,8 +90,6 @@ export const createIsland = async (req, res) => {
   }
 };
 
-
-
 // Get all islands with pagination
 export const getAllIslands = async (req, res) => {
   const { page = 1, limit = 10 } = req.query; // Set default page to 1 and limit to 10
@@ -137,6 +134,21 @@ export const getIslandById = async (req, res) => {
   }
 };
 
+// Get island by slug
+export const getIslandBySlug = async (req, res) => {
+  try {
+    const { slug } = req.params;
+    const island = await islandModels.findOne({ slug: slug });
+    if (!island) {
+      return res.status(404).json({ error: "Island not found" });
+    }
+    res.status(200).json(island);
+  } catch (error) {
+    console.error("Error in getIslandBySlug:", error);
+    res.status(500).json({ error: "Server error" });
+  }
+};
+
 // Update island
 export const updateIsland = async (req, res) => {
   const { id } = req.params;
@@ -173,7 +185,6 @@ export const deleteIsland = async (req, res) => {
     send500(res, { status: false, message: error.message });
   }
 };
-
 
 export const createIslandImage = async (req, res) => {
   const { image_title, image_desc, image_url, islandId } = req.body;

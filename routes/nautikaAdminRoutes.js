@@ -10,7 +10,6 @@ import {
   getAllBlogs,
   getBlogById,
   getBlogBySlug,
-  testAPI,
   getBlogsByCategory,
   loginSuperAdmin,
   searchBlogsByCategoryAndText,
@@ -44,8 +43,6 @@ router.get("/blogs", getAllBlogs);
 router.get("/blogs/:id", getBlogById);
 
 router.get("/blog/:slug", getBlogBySlug);
-
-router.get("/blogs/testAPI", testAPI);
 
 router.get("/blogs/category/:categoryId", getBlogsByCategory);
 router.get("/blogs/search", searchBlogsByCategoryAndText);

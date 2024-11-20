@@ -225,20 +225,6 @@ export const getBlogById = async (req, res) => {
   }
 };
 
-export const testAPI = async (req, res) => {
-  try {
-    const { slug } = req.params;
-    const blog = "NautikaBlog.findOne({ slug: slug })";
-    if (!blog) {
-      return res.status(404).json({ error: "Blog not found" });
-    }
-    res.status(200).json("blog");
-  } catch (error) {
-    console.error("Error in getBlogBySlug:", error);
-    res.status(500).json({ error: error });
-  }
-};
-
 // Get Blog by slug
 export const getBlogBySlug = async (req, res) => {
   try {

@@ -27,6 +27,11 @@ const islandSchema = new Schema(
       type: String,
       required: true,
     },
+    slug: {
+      type: String,
+      required: true,
+      unique: true,
+    },
     best_time: {
       type: String,
       required: true,
@@ -62,6 +67,10 @@ const islandSchema = new Schema(
         type: String,
         required: false,
       },
+      keyword: {
+        type: String,
+        required: false,
+      },
     },
     tags: {
       type: String, // Comma-separated string
@@ -78,5 +87,15 @@ const islandSchema = new Schema(
   },
   { timestamps: true }
 );
+
+islandSchema.pre("save", function (next) {
+  if (!this.slug) {
+    this.slug = this.title
+      .toLowerCase()
+      .replace(/[^a-zA-Z0-9]/g, "-")
+      .replace(/-+/g, "-");
+  }
+  next();
+});
 
 export default mongoose.model("Island", islandSchema);
