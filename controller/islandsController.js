@@ -45,6 +45,7 @@ const { send200, send403, send400, send401, send404, send500 } = responseHelper;
 //     send500(res, { status: false, message: error.message });
 //   }
 // };
+
 export const createIsland = async (req, res) => {
   const {
     title,
@@ -65,16 +66,37 @@ export const createIsland = async (req, res) => {
   }
 
   try {
+    // Generate slug from title
+    const slug = title
+      .toLowerCase()
+      .replace(/[^a-zA-Z0-9]/g, "-")
+      .replace(/-+/g, "-");
+
+    // Ensure popular_beaches is an array of objects without _id
+    const formattedPopularBeaches = Array.isArray(popular_beaches)
+      ? popular_beaches.map(({ name, image, content }) => ({
+          name,
+          image,
+          content,
+        }))
+      : [];
+
+    // Convert image URLs to ObjectIds (assuming you have a separate Image model)
+    const imageIds = Array.isArray(images)
+      ? images.map((url) => new mongoose.Types.ObjectId())
+      : [];
+
     // Create new island document using the provided data
     const newIsland = new islandModels({
       title,
       about,
+      slug,
       best_time,
       cover_image,
-      popular_beaches,
+      popular_beaches: formattedPopularBeaches,
       things_to_do,
       extra_content,
-      images,
+      images: imageIds,
       meta,
       tags,
     });
